@@ -13,36 +13,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-
-/*  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Found devices:',
-            ),
-            Column(
-              children: _devices.map((device) => Text(device)).toList(),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _search,
-        tooltip: 'Search for devices',
-        child: const Icon(Icons.search),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}*/
-
-
 class _MyHomePageState extends State<MyHomePage> {
   List<String> _devices = ["schloss1", "schloss2", "schloss3"]; //connected smartlocks (hardcode at first)
   String _error_msg = "";
@@ -90,18 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
           zoom: 14,
           keepAlive: true
       ),
-      /*nonRotatedChildren: [
-        AttributionWidget.defaultWidget(
-          source: 'Stadia Maps © OpenMapTiles © OpenStreetMap contributors',
-          onSourceTapped: () async {
-            if (!await launchUrl(Uri.parse("https://stadiamaps.com/attribution"))) {
-              if (kDebugMode) {
-                print('Could not launch url');
-              }
-            }
-          },
-        )
-      ],*/
       children: [
         TileLayer(
           urlTemplate:
