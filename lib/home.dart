@@ -1,7 +1,9 @@
+import 'package:app/connection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'connection.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -34,33 +36,31 @@ class _MyHomePageState extends State<MyHomePage> {
   void _search() {
     flutterReactiveBle.scanForDevices(
         withServices: [], scanMode: ScanMode.lowLatency).listen((device) {
-      setState(() {
-        _devices.add(device.name);
-      });
+      if (device.name == "TTGO T-Beam") {
+        print(device);
+      }
     }, onError: (e) {
-      setState(() {
-        _error_msg = e.toString(); //code for handling errors
-        _devices = [];
-      });
+      print("Error: $e");
+    });
+  }
+
+  void _connect() {
+    flutterReactiveBle
+        .connectToDevice(
+      id: '94:B5:55:C7:82:12',
+      connectionTimeout: const Duration(seconds: 5),
+    )
+        .listen((connectionState) {
+      print("Connection state: $connectionState");
+      // Handle connection state updates
+    }, onError: (Object error) {
+      // Handle a possible error
     });
   }
 
   //frontend
   late final List<Widget> _widgetOptions = <Widget>[
-    ListView.builder(
-      itemCount: _devices.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(_devices[index]),
-          trailing: ElevatedButton(
-            onPressed: () {
-              // do something when button is pressed
-            },
-            child: Text('unlock'),
-          ),
-        );
-      },
-    ),
+    const Connection(),
     FlutterMap(
       options: MapOptions(center: LatLng(48, 9), zoom: 14, keepAlive: true),
       children: <Widget>[
