@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app/device.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -14,21 +16,30 @@ class _ConnectionState extends State<Connection> {
   List<DiscoveredDevice> devices = [];
   bool searching = false;
 
+  // Search for devices with the name "SmartLock" or "TTGO T-Beam"
   void search() {
     if (searching) {
+      print("Already searching");
       return;
     }
+    setState(() {
+      devices = [];
+      searching = true;
+    });
 
-    flutterReactiveBle.scanForDevices(
+    print("Making new search");
+    // start scanning for devices
+    StreamSubscription sub = flutterReactiveBle.scanForDevices(
         withServices: [], scanMode: ScanMode.lowLatency).listen((device) {
       if (device.name == "SmartLock" || device.name == "TTGO T-Beam") {
         bool found = false;
+
+        // check if device is already in list
         for (var d in devices) {
           if (d.id == device.id) {
             found = true;
           }
         }
-
         if (!found) {
           devices.add(device);
           setState(() {
@@ -38,25 +49,24 @@ class _ConnectionState extends State<Connection> {
         }
       }
     }, onError: (e) {
-      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: $e"),
+        ),
+      );
+    });
+
+    Timer(const Duration(seconds: 30), () {
+      sub.cancel();
+      setState(() {
+        searching = false;
+      });
     });
   }
 
   void connect(DiscoveredDevice device) {
-    flutterReactiveBle
-        .connectToDevice(
-      id: device.id,
-      connectionTimeout: const Duration(seconds: 5),
-    )
-        .listen((connectionState) {
-      if (connectionState.connectionState == DeviceConnectionState.connected) {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Device(device: device)));
-      } else {
-        print("Connection state: $connectionState");
-      }
-      // Handle connection state updates
-    }, onError: (Object error) {});
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => Device(device: device)));
   }
 
   @override
