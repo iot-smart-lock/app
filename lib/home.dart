@@ -1,9 +1,15 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:app/connection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'connection.dart';
+import 'package:http/http.dart' as http;
+import 'map.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -23,11 +29,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String _error_msg = "";
   final flutterReactiveBle =
       FlutterReactiveBle(); //BLE instance from imported package
-  final mapController = MapController(); //mapController from imported package
-  final apiKey =
-      "233b12ac-968b-403a-b505-f1a2383ed99f"; //apiKey from stadiamaps; in example const
-  final styleUrl =
-      "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"; //kein plan was des ist; in example auch const
   int _selectedIndex = 0; //index for Navigation Bar
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -61,24 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //frontend
   late final List<Widget> _widgetOptions = <Widget>[
     const Connection(),
-    FlutterMap(
-      options: MapOptions(center: LatLng(48, 9), zoom: 14, keepAlive: true),
-      children: <Widget>[
-        TileLayer(
-          urlTemplate: "$styleUrl?api_key={api_key}",
-          additionalOptions: {"api_key": apiKey},
-          maxZoom: 20,
-          maxNativeZoom: 20,
-        ),
-        MarkerLayer(
-          markers: [
-            Marker(
-                point: LatLng(48, 9),
-                builder: (context) => Icon(Icons.location_on)),
-          ],
-        ),
-      ],
-    )
+    const Map(),
   ];
 
   //function for navigation bar

@@ -58,6 +58,9 @@ class _ConnectionState extends State<Connection> {
 
     Timer(const Duration(seconds: 30), () {
       sub.cancel();
+      if (!mounted) {
+        return;
+      }
       setState(() {
         searching = false;
       });
