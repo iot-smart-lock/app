@@ -54,12 +54,19 @@ class _MapState extends State<Map> {
     }
 
     requesting = true;
-    var result =
-        await http.get(Uri.http("23.97.164.229:1880", "/eui-70b3d57ed005bc62"));
+    try {
+      var result = await http
+          .get(Uri.http("20.91.204.230:1880", "/eui-70b3d57ed005bc62"));
 
-    requesting = false;
-    var decoded = json.decode(result.body);
-    return LatLng(decoded['latitude'], decoded["longitude"]);
+      requesting = false;
+      var decoded = json.decode(result.body);
+
+      return LatLng(decoded['latitude'], decoded["longitude"]);
+    } catch (e) {
+      print("Not connected to server");
+      requesting = false;
+      return _position;
+    }
   }
 
   @override
